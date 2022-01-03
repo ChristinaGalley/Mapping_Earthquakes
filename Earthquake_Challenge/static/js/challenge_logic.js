@@ -37,15 +37,15 @@ let baseMaps = {
 };
 
 // 1. Add a 2nd layer group for the tectonic plate data.
-let allEarthquakes = new L.LayerGroup();
 let tectonicPlate = new L.layerGroup();
+let allEarthquakes = new L.LayerGroup();
 let majorEQ = new L.layerGroup();
 
 // 2. Add a reference to the tectonic plates group to the overlays object.
 let overlays = {
+  "Tectonic Plates": tectonicPlate,  
   "Earthquakes": allEarthquakes,
-  "Major Earthquakes": majorEQ,
-  "Tectonic Plates": tectonicPlate  
+  "Major Earthquakes": majorEQ
 };
 
 // Then we add a control to the map that will allow the user to change which
@@ -103,9 +103,9 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   L.geoJson(data, {
     	// We turn each feature into a circleMarker on the map.
     	pointToLayer: function(feature, latlng) {
-      		console.log(data);
-      		return L.circleMarker(latlng);
-        },
+      		  console.log(data);
+      		  return L.circleMarker(latlng);
+      },
       // We set the style for each circleMarker using our styleInfo function.
     style: styleInfo,
      // We create a popup for each circleMarker to display the magnitude and location of the earthquake
@@ -117,7 +117,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
 
   // Then we add the earthquake layer to our map.
   allEarthquakes.addTo(map);
-
+  
   // Here we create a legend control object.
 let legend = L.control({
   position: "bottomright"
@@ -156,7 +156,7 @@ var tectStyle = {
   "weight": 2  
 };
 
-  // 3. Use d3.json to make a call to get our Tectonic Plate geoJSON data.
+  // Use d3.json to make a call to get our Tectonic Plate geoJSON data.
   d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json").then(function(tectdata) {
     console.log(tectdata)
     // Creating a GeoJSON layer with the retrieved data.
@@ -168,6 +168,9 @@ var tectStyle = {
     // Then we add the tectonic plate layer to our map.
     tectonicPlate.addTo(map);
   }); 
+
+// 3. Retrieve the major earthquake GeoJSON data >4.5 mag for the week.
+d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson").then(function(mdata) {
 
   // 4. Use the same style as the earthquake data.
   // This function returns the style data for each of the earthquakes we plot on
@@ -227,4 +230,5 @@ var tectStyle = {
 }).addTo(majorEQ);
   // 9. Close the braces and parentheses for the major earthquake data.
   majorEQ.addTo(map);
+});
 });
